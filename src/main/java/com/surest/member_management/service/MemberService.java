@@ -1,0 +1,56 @@
+package com.surest.member_management.service;
+
+
+import com.surest.member_management.entity.Member;
+import com.surest.member_management.repository.MemberRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    // 🔹 Create member
+    public Member createMember(Member member) {
+        member.setCreatedAt(LocalDateTime.now());
+        member.setUpdatedAt(LocalDateTime.now());
+        return memberRepository.save(member);
+    }
+
+    // 🔹 Get all members
+    public List<Member> getAllMembers() {
+        return memberRepository.findAll();
+    }
+
+    // 🔹 Get member by ID
+    public Member getMemberById(UUID id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+    }
+
+    // 🔹 Update member
+    public Member updateMember(UUID id, Member updatedMember) {
+        Member existingMember = getMemberById(id);
+
+        existingMember.setFirstName(updatedMember.getFirstName());
+        existingMember.setLastName(updatedMember.getLastName());
+        existingMember.setDateOfBirth(updatedMember.getDateOfBirth());
+        existingMember.setEmail(updatedMember.getEmail());
+        existingMember.setUpdatedAt(LocalDateTime.now());
+
+        return memberRepository.save(existingMember);
+    }
+
+    // 🔹 Delete member
+    public void deleteMember(UUID id) {
+        memberRepository.deleteById(id);
+    }
+}
