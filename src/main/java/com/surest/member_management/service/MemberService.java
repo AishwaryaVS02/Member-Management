@@ -3,8 +3,11 @@ package com.surest.member_management.service;
 
 import com.surest.member_management.entity.Member;
 import com.surest.member_management.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +37,14 @@ public class MemberService {
     public Member getMemberById(UUID id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
+
+    }
+
+        public Page<Member> getMembers(int page, int size, String sortBy, String sortDirection) {
+            Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+            Pageable pageable =  PageRequest.of(page, size, sort);
+        Page<Member> memberPage = memberRepository.findAll(pageable);
+        return memberPage;
     }
 
     // 🔹 Update member

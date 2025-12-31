@@ -2,11 +2,10 @@ package com.surest.member_management.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -15,60 +14,37 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final Environment environment;
+    private static final String SECRET_KEY = "THIS_IS_A_VERY_LONG_SECRET_KEY_256_BITS_MINIMUM_LENGTH_REQUIRED";
 
-    private SecretKey signingKey;
-    private long expirationTime;
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
-    public JwtUtil(Environment environment) {
-        this.environment = environment;
-    }
-
-    @PostConstruct
-    public void init() {
-        String secret = environment.getProperty("jwt.secret");
-        String expiration = environment.getProperty("jwt.expiration");
-
-        if (secret == null || expiration == null) {
-            throw new IllegalStateException(
-                    "JWT configuration missing. Please define jwt.secret and jwt.expiration in application.yml"
-            );
-        }
-
-        this.expirationTime = Long.parseLong(expiration);
-        this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-    }
-
-    // ✅ Generate JWT token
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(signingKey)
+                .setSubject(username)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ✅ Extract username from token
     public String extractUsername(String token) {
-        return parseClaims(token).getSubject();
+        return getClaims(token).getSubject();
     }
 
-    // ✅ Validate token
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
     public boolean isTokenValid(String token) {
-        try {
-            parseClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
+        return !getClaims(token).getExpiration().before(new Date());
     }
 
-    private Claims parseClaims(String token) {
+    private Claims getClaims(String token) {
         return Jwts.parser()
-                .verifyWith(signingKey)
+                .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

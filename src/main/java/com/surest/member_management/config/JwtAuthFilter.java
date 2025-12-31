@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,15 +17,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
-    public JwtAuthFilter(JwtUtil jwtUtil,
-                         CustomUserDetailsService userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getServletPath().startsWith("/auth");
     }
 
     @Override
@@ -34,54 +35,39 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        // ✅ 1. BYPASS AUTH ENDPOINT (CRITICAL FIX)
-        if (request.getServletPath().equals("/auth/login")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        System.out.println("JWT FILTER HIT");
 
-        // ✅ 2. READ AUTH HEADER
-        String authHeader = request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
+        System.out.println("Authorization Header = " + header);
 
-        // ✅ 3. IF NO TOKEN → CONTINUE (DO NOT BLOCK)
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
+            System.out.println("JWT Token = " + token);
 
-        // ✅ 4. EXTRACT TOKEN
-        String token = authHeader.substring(7);
-        String username = jwtUtil.extractUsername(token);
-
-        // ✅ 5. VALIDATE TOKEN & AUTHENTICATE USER
-        if (username != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null &&
-                jwtUtil.isTokenValid(token)) {
-            System.out.println("JWT FILTER HIT");
+            String username = jwtUtil.extractUsername(token);
+            System.out.println("Extracted username = " + username);
 
             UserDetails userDetails =
                     userDetailsService.loadUserByUsername(username);
 
-            System.out.println("Username: " + username);
-            System.out.println("Authorities: " + userDetails.getAuthorities());
+            System.out.println("UserDetails authorities = "
+                    + userDetails.getAuthorities());
+
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-
-            authentication.setDetails(
-                    new WebAuthenticationDetailsSource()
-                            .buildDetails(request)
-            );
+                            userDetails, null, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext()
                     .setAuthentication(authentication);
+
+
+            System.out.println("SecurityContext authorities = "
+                    + SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getAuthorities());
         }
 
-        // ✅ 6. CONTINUE FILTER CHAIN
         filterChain.doFilter(request, response);
     }
 }

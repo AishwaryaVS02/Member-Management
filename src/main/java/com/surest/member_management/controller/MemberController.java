@@ -3,6 +3,8 @@ package com.surest.member_management.controller;
 
 import com.surest.member_management.entity.Member;
 import com.surest.member_management.service.MemberService;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +36,17 @@ public class MemberController {
     @GetMapping("/{id}")
     public Member getMemberById(@PathVariable UUID id) {
         return memberService.getMemberById(id);
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<Member>> getMembers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDirection
+    ) {
+        Page<Member> members = memberService.getMembers(page, size, sortBy, sortDirection);
+        return ResponseEntity.ok(members);
     }
 
     // 🔹 Update Member

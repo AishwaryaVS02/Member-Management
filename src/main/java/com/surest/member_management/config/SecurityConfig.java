@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,40 +18,35 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @PostConstruct
-    public void testFilterLoaded() {
-        System.out.println("JWT FILTER BEAN LOADED");
-    }
-
-
     private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/members", "/members/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/members/**")
+                        .hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers("/members/**")
+                        .hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
-                // 🔥 THIS LINE IS CRITICAL
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter,
+                UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
-    // REQUIRED for AuthController
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-}
 
+}
 
 
