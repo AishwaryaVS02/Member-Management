@@ -3,6 +3,8 @@ package com.surest.member_management.service;
 
 import com.surest.member_management.entity.Member;
 import com.surest.member_management.repository.MemberRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,26 +30,30 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    // 🔹 Get all members
+    @Cacheable(value = "members")
     public List<Member> getAllMembers() {
         return memberRepository.findAll();
     }
 
-    // 🔹 Get member by ID
+    @Cacheable(value = "members", key = "#id")
     public Member getMemberById(UUID id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
     }
-
-        public Page<Member> getMembers(int page, int size, String sortBy, String sortDirection) {
+    @Cacheable(
+            value = "members",
+            key = "'page_' + #page + '_' + #size"
+    )
+    public Page<Member> getMembers(int page, int size, String sortBy, String sortDirection) {
             Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
             Pageable pageable =  PageRequest.of(page, size, sort);
+            pageable.getPageNumber();
         Page<Member> memberPage = memberRepository.findAll(pageable);
         return memberPage;
     }
 
-    // 🔹 Update member
+    @CacheEvict(value = "members", allEntries = true)
     public Member updateMember(UUID id, Member updatedMember) {
         Member existingMember = getMemberById(id);
 
@@ -60,7 +66,7 @@ public class MemberService {
         return memberRepository.save(existingMember);
     }
 
-    // 🔹 Delete member
+    @CacheEvict(value = "members", allEntries = true)
     public void deleteMember(UUID id) {
         memberRepository.deleteById(id);
     }

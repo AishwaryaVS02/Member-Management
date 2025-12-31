@@ -23,11 +23,9 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    // Constructors
     public User() {
     }
 
-    // Getters & Setters
     public UUID getId() {
         return id;
     }

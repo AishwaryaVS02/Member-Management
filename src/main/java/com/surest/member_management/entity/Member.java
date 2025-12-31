@@ -33,11 +33,10 @@ public class Member {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Constructors
+
     public Member() {
     }
 
-    // Getters & Setters
     public UUID getId() {
         return id;
     }

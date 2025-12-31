@@ -20,19 +20,19 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    // 🔹 Create Member
+    //Create Member
     @PostMapping
     public Member createMember(@RequestBody Member member) {
         return memberService.createMember(member);
     }
 
-    // 🔹 Get all Members
+    //Get all Members
     @GetMapping
     public List<Member> getAllMembers() {
         return memberService.getAllMembers();
     }
 
-    // 🔹 Get Member by ID
+    //Get Member by ID
     @GetMapping("/{id}")
     public Member getMemberById(@PathVariable UUID id) {
         return memberService.getMemberById(id);
@@ -49,7 +49,7 @@ public class MemberController {
         return ResponseEntity.ok(members);
     }
 
-    // 🔹 Update Member
+    //Update Member
     @PutMapping("/{id}")
     public Member updateMember(
             @PathVariable UUID id,
@@ -57,7 +57,7 @@ public class MemberController {
         return memberService.updateMember(id, member);
     }
 
-    // 🔹 Delete Member
+    //Delete Member
     @DeleteMapping("/{id}")
     public void deleteMember(@PathVariable UUID id) {
         memberService.deleteMember(id);

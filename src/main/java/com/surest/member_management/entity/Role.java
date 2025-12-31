@@ -17,7 +17,7 @@ public class Role {
     @Column(nullable = false, unique = true)
     private String name;
 
-    // Constructors
+
     public Role() {
     }
 
@@ -25,7 +25,7 @@ public class Role {
         this.name = name;
     }
 
-    // Getters & Setters
+
     public UUID getId() {
         return id;
     }
