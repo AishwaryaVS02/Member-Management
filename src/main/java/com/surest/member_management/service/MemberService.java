@@ -3,6 +3,7 @@ package com.surest.member_management.service;
 
 import com.surest.member_management.entity.Member;
 import com.surest.member_management.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -25,6 +27,7 @@ public class MemberService {
 
     // 🔹 Create member
     public Member createMember(Member member) {
+        log.info("Adding a new member");
         member.setCreatedAt(LocalDateTime.now());
         member.setUpdatedAt(LocalDateTime.now());
         return memberRepository.save(member);
@@ -46,6 +49,7 @@ public class MemberService {
             key = "'page_' + #page + '_' + #size"
     )
     public Page<Member> getMembers(int page, int size, String sortBy, String sortDirection) {
+        log.error("Fetching paged members data");
             Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
             Pageable pageable =  PageRequest.of(page, size, sort);
             pageable.getPageNumber();

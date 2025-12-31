@@ -2,6 +2,7 @@ package com.surest.member_management.service;
 
 import com.surest.member_management.entity.User;
 import com.surest.member_management.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Service
 public class UserService {
+
 
     private final UserRepository userRepository;
 
