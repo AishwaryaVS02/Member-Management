@@ -27,13 +27,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8081/auth/login",
+					"raw": "http://localhost:8081/api/v1/auth/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8081",
 					"path": [
+						"api",
+						"v1",
 						"auth",
 						"login"
 					]
@@ -61,13 +63,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8081/auth/login",
+					"raw": "http://localhost:8081/api/v1/auth/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8081",
 					"path": [
+						"api",
+						"v1",
 						"auth",
 						"login"
 					]
@@ -81,13 +85,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/members",
+					"raw": "http://localhost:8081/api/v1/members",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8081",
 					"path": [
+						"api",
+						"v1",
 						"members"
 					]
 				}
@@ -105,13 +111,15 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8081/members/paged?page=0&size=20",
+					"raw": "http://localhost:8081/api/v1/members/paged?page=0&size=20",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8081",
 					"path": [
+						"api",
+						"v1",
 						"members",
 						"paged"
 					],
@@ -140,13 +148,15 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8081/members/3f7c2a91-8e64-4b5d-9c73-1b0e6f5a9d42\n",
+					"raw": "http://localhost:8081/api/v1/members/3f7c2a91-8e64-4b5d-9c73-1b0e6f5a9d42\n",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8081",
 					"path": [
+						"api",
+						"v1",
 						"members",
 						"3f7c2a91-8e64-4b5d-9c73-1b0e6f5a9d42\n"
 					]
@@ -178,13 +188,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8081/members",
+					"raw": "http://localhost:8081/api/v1/members",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8081",
 					"path": [
+						"api",
+						"v1",
 						"members"
 					]
 				}
@@ -215,13 +227,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8081/members/52c48385-473d-48b5-8b1b-582052fcff88",
+					"raw": "http://localhost:8081/api/v1/members/52c48385-473d-48b5-8b1b-582052fcff88",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8081",
 					"path": [
+						"api",
+						"v1",
 						"members",
 						"52c48385-473d-48b5-8b1b-582052fcff88"
 					]
@@ -244,13 +258,15 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8081/members/52c48385-473d-48b5-8b1b-582052fcff88",
+					"raw": "http://localhost:8081/api/v1/members/52c48385-473d-48b5-8b1b-582052fcff88",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8081",
 					"path": [
+						"api",
+						"v1",
 						"members",
 						"52c48385-473d-48b5-8b1b-582052fcff88"
 					]
