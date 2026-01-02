@@ -16,9 +16,10 @@
 - Logging and handling of necessary exceptions
 
 ## Screenshots
+<img width="1920" height="1080" alt="Screenshot (33)" src="https://github.com/user-attachments/assets/7c4f2b94-3875-4cef-a36b-b13bc66e8867" />
 
 ### JaCoCo Test Coverage Report
-![Screenshot (33).png](../../Pictures/Screenshots/Screenshot%20%2833%29.png)
+
 ## Technologies, Tools, and Build Tools
 
 ### Technologies
