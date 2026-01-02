@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: member-management
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/member_db
+    username: postgres
+    password: Nutan@001
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate   # IMPORTANT (Flyway manages schema)
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8081
+
+jwt:
+  secret: my-super-secret-key-1234567890123456
+  expiration: 86400000

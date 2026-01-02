@@ -1,0 +1,278 @@
+{
+	"info": {
+		"_postman_id": "0f836116-632c-4ef7-869e-e5e208ece529",
+		"name": "Member_Api_Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "51187019",
+		"_collection_link": "https://vsaishwarya2697-8988691.postman.co/workspace/Aishwarya-V-S's-Workspace~54885f5e-21eb-4553-8d3e-87391754a8a1/collection/51187019-0f836116-632c-4ef7-869e-e5e208ece529?action=share&source=collection_link&creator=51187019"
+	},
+	"item": [
+		{
+			"name": "Login-api-admin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login-api-user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"user2\",\n  \"password\": \"user123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-All-members-api",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/members",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-members-paginated-api",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzY3MTgyMzc0LCJleHAiOjE3NjcxODU5NzR9.xXWpFsBjigOp_zm14yNl-qoNJGHlMOWJZt31hisHV5k"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/members/paged?page=0&size=20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"members",
+						"paged"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-members-by-id-api",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzY3MTgxMzE0LCJleHAiOjE3NjcxODQ5MTR9.ZhVYtm8d2x5GG_Ag-8W9mrGA1FEEfaY7MQU5MSw94j4"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/members/3f7c2a91-8e64-4b5d-9c73-1b0e6f5a9d42\n",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"members",
+						"3f7c2a91-8e64-4b5d-9c73-1b0e6f5a9d42\n"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create-member-api",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzY3MTg0NjAwLCJleHAiOjE3NjcxODgyMDB9.x2sUVYgGEXAg_tASL3cR7S9KIk0h_f0Um4oD-H3ESMI"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\n{\n  \"firstName\": \"Anu\",\n  \"lastName\": \"S\",\n  \"dateOfBirth\": \"1998-06-15\",\n  \"email\": \"anu@example.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/members",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update-member-api",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzY3MTg0NjAwLCJleHAiOjE3NjcxODgyMDB9.x2sUVYgGEXAg_tASL3cR7S9KIk0h_f0Um4oD-H3ESMI"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\n{\n  \"firstName\": \"Aishwarya\",\n  \"lastName\": \"Sanganal\",\n  \"dateOfBirth\": \"1998-06-15\",\n  \"email\": \"aishwarya.sanganal@example.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/members/52c48385-473d-48b5-8b1b-582052fcff88",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"members",
+						"52c48385-473d-48b5-8b1b-582052fcff88"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete-member-api",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzY3MzIyMDUwLCJleHAiOjE3NjczMjU2NTB9.qafiLSPGGivIwr-ge3_e6UMPes6sEaPog8J_-8LH6VQ"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/members/52c48385-473d-48b5-8b1b-582052fcff88",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"members",
+						"52c48385-473d-48b5-8b1b-582052fcff88"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
