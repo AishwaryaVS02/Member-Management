@@ -17,6 +17,9 @@
 
 ## Screenshots
 
+### Build Success
+<img width="1901" height="998" alt="Screenshot 2026-01-02 085259" src="https://github.com/user-attachments/assets/08c31e09-eb16-49d0-956c-9ea6782423ee" />
+
 ### JaCoCo Test Coverage Report
 <img width="1918" height="943" alt="Screenshot (33)" src="https://github.com/user-attachments/assets/84ed3aea-eb5d-4b46-b3d9-253d1bb6443f" />
 
