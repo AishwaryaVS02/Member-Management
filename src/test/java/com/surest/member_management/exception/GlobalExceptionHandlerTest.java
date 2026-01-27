@@ -1,78 +1,146 @@
 package com.surest.member_management.exception;
 
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalExceptionHandlerTest {
 
-    private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
+    private GlobalExceptionHandler handler;
 
-    @Test
-    void testHandleValidation() {
-        // Create a binding result with errors
-        BeanPropertyBindingResult bindingResult =
-                new BeanPropertyBindingResult(new Object(), "objectName");
-
-        bindingResult.addError(new FieldError("objectName", "firstName", "First name required"));
-        bindingResult.addError(new FieldError("objectName", "lastName", "Last name required"));
-
-        MethodArgumentNotValidException exception =
-                new MethodArgumentNotValidException(null, bindingResult);
-
-        ResponseEntity<?> response = handler.handleValidation(exception);
-
-        assertEquals(400, response.getStatusCode().value());
-
-        Map<String, String> body = (Map<String, String>) response.getBody();
-
-        assertNotNull(body);
-        assertEquals(2, body.size());
-        assertEquals("First name required", body.get("firstName"));
-        assertEquals("Last name required", body.get("lastName"));
+    @BeforeEach
+    void setUp() {
+        handler = new GlobalExceptionHandler();
     }
 
     @Test
-    void testHandleIllegalArgument() {
-        IllegalArgumentException ex = new IllegalArgumentException("Bad argument");
+    void handleValidation_returnsBadRequestWithFieldErrors() {
+        BeanPropertyBindingResult bindingResult =
+                new BeanPropertyBindingResult(new Object(), "object");
+
+        bindingResult.addError(new FieldError("object", "name", "Name is required"));
+
+        MethodArgumentNotValidException ex =
+                new MethodArgumentNotValidException(null, bindingResult);
+
+        ResponseEntity<?> response = handler.handleValidation(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> body = (Map<String, String>) response.getBody();
+
+        assertThat(body).containsEntry("name", "Name is required");
+    }
+
+    @Test
+    void handleAccessDenied_returnsForbidden() {
+        AccessDeniedException ex = new AccessDeniedException("Access denied");
+
+        ResponseEntity<?> response = handler.handleAccessDenied(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> body = (Map<String, String>) response.getBody();
+
+        assertThat(body)
+                .containsEntry("error", "Forbidden")
+                .containsEntry("message", "You do not have permission to access this resource");
+    }
+
+    @Test
+    void handleTypeMismatch_returnsBadRequest() {
+        // Spring Boot 3 / Spring 6 constructor
+        MethodArgumentTypeMismatchException ex =
+                new MethodArgumentTypeMismatchException(
+                        "abc",          // value
+                        Integer.class,  // required type
+                        "id",           // parameter name
+                        null,
+                        null// MethodParameter (can be null)
+                );
+
+        ResponseEntity<?> response = handler.handleTypeMismatch(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> body = (Map<String, String>) response.getBody();
+
+        assertThat(body)
+                .containsEntry("error", "Invalid parameter")
+                .containsEntry("message", "Parameter 'id' has invalid value 'abc'");
+    }
+
+    @Test
+    void handleIllegalArgument_returnsConflict() {
+        IllegalArgumentException ex = new IllegalArgumentException("Duplicate entry");
 
         ResponseEntity<?> response = handler.handleIllegalArgument(ex);
 
-        assertEquals(409, response.getStatusCode().value());
-        assertEquals("Bad argument", ((Map<?, ?>) response.getBody()).get("error"));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> body = (Map<String, String>) response.getBody();
+
+        assertThat(body).containsEntry("error", "Duplicate entry");
     }
 
     @Test
-    void testHandleNotFound() {
+    void handleNotFound_returnsNotFound() {
         RuntimeException ex = new RuntimeException("Resource not found");
 
         ResponseEntity<?> response = handler.handleNotFound(ex);
 
-        assertEquals(404, response.getStatusCode().value());
-        assertEquals("Resource not found", ((Map<?, ?>) response.getBody()).get("error"));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> body = (Map<String, String>) response.getBody();
+
+        assertThat(body).containsEntry("error", "Resource not found");
     }
 
     @Test
-    void testHandleAuthErrors() {
-        AuthenticationException ex = mock(AuthenticationException.class);
-        when(ex.getMessage()).thenReturn("Invalid token");
+    void handleAuthErrors_returnsUnauthorized() {
+        BadCredentialsException ex = new BadCredentialsException("Invalid credentials");
 
         ResponseEntity<?> response = handler.handleAuthErrors(ex);
 
-        assertEquals(401, response.getStatusCode().value());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 
+        @SuppressWarnings("unchecked")
         Map<String, String> body = (Map<String, String>) response.getBody();
 
-        assertEquals("Unauthorized", body.get("error"));
-        assertEquals("Invalid token", body.get("message"));
+        assertThat(body)
+                .containsEntry("error", "Unauthorized")
+                .containsEntry("message", "Invalid credentials");
+    }
+
+    @Test
+    void handleInternalServerError_returns500() {
+        Exception ex = new Exception("Boom");
+
+        ResponseEntity<?> response = handler.handleInternalServerError(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> body = (Map<String, String>) response.getBody();
+
+        assertThat(body)
+                .containsEntry("error", "Internal Server Error")
+                .containsEntry("message", "Something went wrong. Please try again later.");
     }
 }

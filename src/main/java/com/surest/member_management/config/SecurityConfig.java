@@ -1,6 +1,6 @@
 package com.surest.member_management.config;
 
-import jakarta.annotation.PostConstruct;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,10 +29,10 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/members/**")
+                        .requestMatchers("/api/*/auth/**","/v3/api-docs/**","/swagger*/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/*/members/**")
                         .hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                        .requestMatchers("/members/**")
+                        .requestMatchers("/api/*/members/**")
                         .hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
