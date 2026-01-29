@@ -2,6 +2,7 @@ package com.surest.member_management.service;
 
 import com.surest.member_management.entity.Member;
 import com.surest.member_management.repository.MemberRepository;
+import com.surest.member_management.service.Impl.MemberServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MemberServiceTest {
+class MemberServiceImplTest {
 
     @Mock
     private MemberRepository memberRepository;
 
     @InjectMocks
-    private MemberService memberService;
+    private MemberServiceImpl memberServiceImpl;
 
     private Member member;
     private UUID memberId;
@@ -50,7 +51,7 @@ class MemberServiceTest {
     void createMember_shouldSaveMember() {
         when(memberRepository.save(any(Member.class))).thenReturn(member);
 
-        Member savedMember = memberService.createMember(member);
+        Member savedMember = memberServiceImpl.createMember(member);
 
         assertNotNull(savedMember);
         assertNotNull(savedMember.getCreatedAt());
@@ -63,7 +64,7 @@ class MemberServiceTest {
     void getAllMembers_shouldReturnMemberList() {
         when(memberRepository.findAll()).thenReturn(List.of(member));
 
-        List<Member> members = memberService.getAllMembers();
+        List<Member> members = memberServiceImpl.getAllMembers();
 
         assertEquals(1, members.size());
         verify(memberRepository, times(1)).findAll();
@@ -74,7 +75,7 @@ class MemberServiceTest {
     void getMemberById_shouldReturnMember() {
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
-        Member found = memberService.getMemberById(memberId);
+        Member found = memberServiceImpl.getMemberById(memberId);
 
         assertEquals(memberId, found.getId());
         verify(memberRepository, times(1)).findById(memberId);
@@ -87,7 +88,7 @@ class MemberServiceTest {
 
         RuntimeException exception = assertThrows(
                 RuntimeException.class,
-                () -> memberService.getMemberById(memberId)
+                () -> memberServiceImpl.getMemberById(memberId)
         );
 
         assertEquals("Member not found", exception.getMessage());
@@ -102,7 +103,7 @@ class MemberServiceTest {
         when(memberRepository.findAll(pageable)).thenReturn(page);
 
         Page<Member> result =
-                memberService.getMembers(0, 5, "firstName", "ASC");
+                memberServiceImpl.getMembers(0, 5, "firstName", "ASC");
 
         assertEquals(1, result.getTotalElements());
         verify(memberRepository, times(1)).findAll(any(PageRequest.class));
@@ -119,7 +120,7 @@ class MemberServiceTest {
         updated.setLastName("Smith");
         updated.setEmail("jane.smith@gmail.com");
 
-        Member result = memberService.updateMember(memberId, updated);
+        Member result = memberServiceImpl.updateMember(memberId, updated);
 
         assertEquals("Jane", result.getFirstName());
         assertEquals("Smith", result.getLastName());
@@ -135,7 +136,7 @@ class MemberServiceTest {
     void deleteMember_shouldDeleteById() {
         doNothing().when(memberRepository).deleteById(memberId);
 
-        memberService.deleteMember(memberId);
+        memberServiceImpl.deleteMember(memberId);
 
         verify(memberRepository, times(1)).deleteById(memberId);
     }

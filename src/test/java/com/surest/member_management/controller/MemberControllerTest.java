@@ -1,7 +1,7 @@
 package com.surest.member_management.controller;
 
 import com.surest.member_management.entity.Member;
-import com.surest.member_management.service.MemberService;
+import com.surest.member_management.service.Impl.MemberServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class MemberControllerTest {
 
     @Mock
-    private MemberService memberService;
+    private MemberServiceImpl memberServiceImpl;
 
     @InjectMocks
     private MemberController memberController;
@@ -36,7 +36,7 @@ class MemberControllerTest {
         // Arrange
         Member member = new Member();
         member.setId(UUID.randomUUID());
-        when(memberService.createMember(member)).thenReturn(member);
+        when(memberServiceImpl.createMember(member)).thenReturn(member);
 
         // Act
         Member result = memberController.createMember(member);
@@ -44,7 +44,7 @@ class MemberControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(member.getId(), result.getId());
-        verify(memberService).createMember(member);
+        verify(memberServiceImpl).createMember(member);
     }
 
     @Test
@@ -53,14 +53,14 @@ class MemberControllerTest {
         Member member1 = new Member();
         Member member2 = new Member();
         List<Member> members = Arrays.asList(member1, member2);
-        when(memberService.getAllMembers()).thenReturn(members);
+        when(memberServiceImpl.getAllMembers()).thenReturn(members);
 
         // Act
         List<Member> result = memberController.getAllMembers();
 
         // Assert
         assertEquals(2, result.size());
-        verify(memberService).getAllMembers();
+        verify(memberServiceImpl).getAllMembers();
     }
 
     @Test
@@ -69,7 +69,7 @@ class MemberControllerTest {
         UUID id = UUID.randomUUID();
         Member member = new Member();
         member.setId(id);
-        when(memberService.getMemberById(id)).thenReturn(member);
+        when(memberServiceImpl.getMemberById(id)).thenReturn(member);
 
         // Act
         Member result = memberController.getMemberById(id);
@@ -77,7 +77,7 @@ class MemberControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(id, result.getId());
-        verify(memberService).getMemberById(id);
+        verify(memberServiceImpl).getMemberById(id);
     }
 
     @Test
@@ -85,7 +85,7 @@ class MemberControllerTest {
         // Arrange
         Member member = new Member();
         Page<Member> page = new PageImpl<>(List.of(member));
-        when(memberService.getMembers(0, 10, "createdAt", "DESC")).thenReturn(page);
+        when(memberServiceImpl.getMembers(0, 10, "createdAt", "DESC")).thenReturn(page);
 
         // Act
         ResponseEntity<Page<Member>> response = memberController.getMembers(0, 10, "createdAt", "DESC");
@@ -93,7 +93,7 @@ class MemberControllerTest {
         // Assert
         assertNotNull(response);
         assertEquals(1, response.getBody().getContent().size());
-        verify(memberService).getMembers(0, 10, "createdAt", "DESC");
+        verify(memberServiceImpl).getMembers(0, 10, "createdAt", "DESC");
     }
 
     @Test
@@ -102,7 +102,7 @@ class MemberControllerTest {
         UUID id = UUID.randomUUID();
         Member member = new Member();
         member.setId(id);
-        when(memberService.updateMember(id, member)).thenReturn(member);
+        when(memberServiceImpl.updateMember(id, member)).thenReturn(member);
 
         // Act
         Member result = memberController.updateMember(id, member);
@@ -110,19 +110,19 @@ class MemberControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(id, result.getId());
-        verify(memberService).updateMember(id, member);
+        verify(memberServiceImpl).updateMember(id, member);
     }
 
     @Test
     void deleteMember_callsService() {
         // Arrange
         UUID id = UUID.randomUUID();
-        doNothing().when(memberService).deleteMember(id);
+        doNothing().when(memberServiceImpl).deleteMember(id);
 
         // Act
         memberController.deleteMember(id);
 
         // Assert
-        verify(memberService).deleteMember(id);
+        verify(memberServiceImpl).deleteMember(id);
     }
 }

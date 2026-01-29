@@ -1,6 +1,6 @@
 package com.surest.member_management.config;
 
-import com.surest.member_management.service.CustomUserDetailsService;
+import com.surest.member_management.service.Impl.CustomUserDetailsServiceImpl;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,7 +24,7 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsServiceImpl userDetailsService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {

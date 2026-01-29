@@ -1,10 +1,9 @@
 package com.surest.member_management.config;
 
-import com.surest.member_management.service.CustomUserDetailsService;
+import com.surest.member_management.service.Impl.CustomUserDetailsServiceImpl;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,7 +25,7 @@ import static org.mockito.Mockito.*;
 class JwtAuthFilterTest {
 
     private JwtUtil jwtUtil;
-    private CustomUserDetailsService userDetailsService;
+    private CustomUserDetailsServiceImpl userDetailsService;
     private JwtAuthFilter filter;
 
     private MockHttpServletRequest request;
@@ -36,7 +35,7 @@ class JwtAuthFilterTest {
     @BeforeEach
     void setUp() {
         jwtUtil = mock(JwtUtil.class);
-        userDetailsService = mock(CustomUserDetailsService.class);
+        userDetailsService = mock(CustomUserDetailsServiceImpl.class);
         filter = new JwtAuthFilter(jwtUtil, userDetailsService);
 
         request = new MockHttpServletRequest();
