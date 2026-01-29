@@ -21,7 +21,13 @@
 <img width="1901" height="998" alt="Screenshot 2026-01-02 085259" src="https://github.com/user-attachments/assets/08c31e09-eb16-49d0-956c-9ea6782423ee" />
 
 ### JaCoCo Test Coverage Report
-<img width="1918" height="943" alt="Screenshot (33)" src="https://github.com/user-attachments/assets/84ed3aea-eb5d-4b46-b3d9-253d1bb6443f" />
+<img width="1920" height="1080" alt="Screenshot (41)" src="https://github.com/user-attachments/assets/0b1ebdd6-20bd-4d84-9c77-a05cae288421" />
+
+### Swagger UI
+<img width="1920" height="1014" alt="Screenshot (34)" src="https://github.com/user-attachments/assets/1439eae1-b38d-44e4-b274-bb27d295fe47" />
+
+<img width="1920" height="1011" alt="Screenshot (35)" src="https://github.com/user-attachments/assets/137d610a-1619-4291-9aee-d5b4c62de24d" />
+
 
 
 ## Technologies, Tools, and Build Tools
