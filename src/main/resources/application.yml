@@ -11,14 +11,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate   # IMPORTANT (Flyway manages schema)
-    show-sql: true
+      show-sql: true
     properties:
-      hibernate:
-        format_sql: true
+       format_sql: true
 
   flyway:
     enabled: true
     baseline-on-migrate: true
+
 
 server:
   port: 8081

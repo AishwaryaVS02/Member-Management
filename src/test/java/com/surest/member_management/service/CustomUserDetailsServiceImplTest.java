@@ -3,6 +3,7 @@ package com.surest.member_management.service;
 import com.surest.member_management.entity.User;
 import com.surest.member_management.entity.Role;
 import com.surest.member_management.repository.UserRepository;
+import com.surest.member_management.service.Impl.CustomUserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CustomUserDetailsServiceTest {
+class CustomUserDetailsServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
-    private CustomUserDetailsService customUserDetailsService;
+    private CustomUserDetailsServiceImpl customUserDetailsServiceImpl;
 
     //SUCCESS CASE
     @Test
@@ -42,7 +43,7 @@ class CustomUserDetailsServiceTest {
 
 
         UserDetails userDetails =
-                customUserDetailsService.loadUserByUsername("admin");
+                customUserDetailsServiceImpl.loadUserByUsername("admin");
 
 
         assertNotNull(userDetails);
@@ -68,7 +69,7 @@ class CustomUserDetailsServiceTest {
 
         assertThrows(
                 UsernameNotFoundException.class,
-                () -> customUserDetailsService.loadUserByUsername("unknown")
+                () -> customUserDetailsServiceImpl.loadUserByUsername("unknown")
         );
 
         verify(userRepository, times(1)).findByUsername("unknown");

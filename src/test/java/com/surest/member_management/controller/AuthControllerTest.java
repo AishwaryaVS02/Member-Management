@@ -1,90 +1,98 @@
 package com.surest.member_management.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.surest.member_management.config.JwtUtil;
 import com.surest.member_management.dto.LoginRequestDto;
+import com.surest.member_management.dto.LoginResponseDto;
 import com.surest.member_management.entity.Role;
 import com.surest.member_management.entity.User;
 import com.surest.member_management.repository.UserRepository;
-import com.surest.member_management.service.CustomUserDetailsService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-
-import org.springframework.http.MediaType;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(AuthController.class)
-@AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockitoBean
+    @Mock
     private AuthenticationManager authenticationManager;
-    @MockitoBean
-    private CustomUserDetailsService customUserDetailsService;
 
-    @MockitoBean
+    @Mock
     private JwtUtil jwtUtil;
 
-    @MockitoBean
+    @Mock
     private UserRepository userRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @InjectMocks
+    private AuthController authController;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
-    void login_shouldReturnJwtToken_whenCredentialsAreValid() throws Exception {
-
-
+    void login_successfulAuthentication_returnsToken() {
+        // Arrange
         LoginRequestDto request = new LoginRequestDto();
-        request.setUsername("admin");
-        request.setPassword("password");
+        request.setUsername("john");
+        request.setPassword("password123");
 
         Role role = new Role();
-        role.setName("ROLE_ADMIN");
+        role.setName("USER");
 
         User user = new User();
-        user.setUsername("admin");
-        user.setPasswordHash("encoded-password");
+        user.setUsername("john");
         user.setRole(role);
 
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(null);
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(jwtUtil.generateToken("john", "USER")).thenReturn("mocked-jwt-token");
 
-        when(userRepository.findByUsername("admin"))
-                .thenReturn(Optional.of(user));
+        // Act
+        ResponseEntity<LoginResponseDto> response = authController.login(request);
 
-        when(jwtUtil.generateToken("admin", "ROLE_ADMIN"))
-                .thenReturn("mock-jwt-token");
+        // Assert
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        assertEquals("mocked-jwt-token", response.getBody().getToken());
 
+        // Verify authenticationManager was called correctly
+        ArgumentCaptor<UsernamePasswordAuthenticationToken> authCaptor = ArgumentCaptor.forClass(UsernamePasswordAuthenticationToken.class);
+        verify(authenticationManager).authenticate(authCaptor.capture());
+        assertEquals("john", authCaptor.getValue().getPrincipal());
+        assertEquals("password123", authCaptor.getValue().getCredentials());
 
-        mockMvc.perform(post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("mock-jwt-token"));
+        // Verify repository and jwt were called
+        verify(userRepository).findByUsername("john");
+        verify(jwtUtil).generateToken("john", "USER");
+    }
 
-        verify(authenticationManager, times(1))
-                .authenticate(any(UsernamePasswordAuthenticationToken.class));
+    @Test
+    void login_userNotFound_throwsException() {
+        // Arrange
+        LoginRequestDto request = new LoginRequestDto();
+        request.setUsername("john");
+        request.setPassword("password123");
 
-        verify(userRepository, times(1))
-                .findByUsername("admin");
+        when(userRepository.findByUsername("john")).thenReturn(Optional.empty());
 
-        verify(jwtUtil, times(1))
-                .generateToken("admin", "ROLE_ADMIN");
+        // Act & Assert
+        assertThrows(NoSuchElementException.class, () -> authController.login(request));
+
+        // Verify authenticate was called
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(userRepository).findByUsername("john");
+        verifyNoInteractions(jwtUtil);
     }
 }

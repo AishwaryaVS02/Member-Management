@@ -7,6 +7,7 @@ import com.surest.member_management.dto.LoginResponseDto;
 import com.surest.member_management.entity.User;
 import com.surest.member_management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@Slf4j
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -27,7 +29,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(
             @RequestBody LoginRequestDto request) {
-        System.out.println("AUTH CONTROLLER HIT");
+        log.info("AUTH CONTROLLER HIT");
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

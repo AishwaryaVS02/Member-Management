@@ -2,6 +2,7 @@ package com.surest.member_management.service;
 
 import com.surest.member_management.entity.User;
 import com.surest.member_management.repository.UserRepository;
+import com.surest.member_management.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     private User user;
     private UUID userId;
@@ -43,7 +44,7 @@ class UserServiceTest {
         when(userRepository.findByUsername("admin"))
                 .thenReturn(Optional.of(user));
 
-        Optional<User> result = userService.findByUsername("admin");
+        Optional<User> result = userServiceImpl.findByUsername("admin");
 
         assertTrue(result.isPresent());
         assertEquals("admin", result.get().getUsername());
@@ -55,7 +56,7 @@ class UserServiceTest {
         when(userRepository.findByUsername("unknown"))
                 .thenReturn(Optional.empty());
 
-        Optional<User> result = userService.findByUsername("unknown");
+        Optional<User> result = userServiceImpl.findByUsername("unknown");
 
         assertTrue(result.isEmpty());
         verify(userRepository).findByUsername("unknown");
@@ -67,7 +68,7 @@ class UserServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        Optional<User> result = userService.findById(userId);
+        Optional<User> result = userServiceImpl.findById(userId);
 
         assertTrue(result.isPresent());
         assertEquals(userId, result.get().getId());
@@ -79,7 +80,7 @@ class UserServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.empty());
 
-        Optional<User> result = userService.findById(userId);
+        Optional<User> result = userServiceImpl.findById(userId);
 
         assertTrue(result.isEmpty());
         verify(userRepository).findById(userId);
@@ -91,7 +92,7 @@ class UserServiceTest {
         when(userRepository.save(user))
                 .thenReturn(user);
 
-        User savedUser = userService.save(user);
+        User savedUser = userServiceImpl.save(user);
 
         assertNotNull(savedUser);
         assertEquals("admin", savedUser.getUsername());
@@ -104,7 +105,7 @@ class UserServiceTest {
         when(userRepository.findByUsername("admin"))
                 .thenReturn(Optional.of(user));
 
-        boolean exists = userService.existsByUsername("admin");
+        boolean exists = userServiceImpl.existsByUsername("admin");
 
         assertTrue(exists);
         verify(userRepository).findByUsername("admin");
@@ -115,7 +116,7 @@ class UserServiceTest {
         when(userRepository.findByUsername("unknown"))
                 .thenReturn(Optional.empty());
 
-        boolean exists = userService.existsByUsername("unknown");
+        boolean exists = userServiceImpl.existsByUsername("unknown");
 
         assertFalse(exists);
         verify(userRepository).findByUsername("unknown");
