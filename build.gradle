@@ -47,8 +47,6 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mockito:mockito-core'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
     testImplementation platform("org.testcontainers:testcontainers-bom:1.19.7")
@@ -56,7 +54,6 @@ dependencies {
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "org.testcontainers:postgresql"
 
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
 
 }
 

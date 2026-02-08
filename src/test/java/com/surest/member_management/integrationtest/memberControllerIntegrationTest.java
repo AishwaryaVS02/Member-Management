@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,8 +20,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
@@ -28,9 +30,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Testcontainers
-class MemberControllerIntegrationTestWithTestcontainers {
+class memberControllerIntegrationTest {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
@@ -70,8 +73,6 @@ class MemberControllerIntegrationTestWithTestcontainers {
         member.setLastName(lastName);
         member.setEmail(email);
         member.setDateOfBirth(LocalDate.of(1990, 5, 15));
-        member.setCreatedAt(LocalDateTime.now());
-        member.setUpdatedAt(LocalDateTime.now());
         return member;
     }
 
@@ -83,6 +84,7 @@ class MemberControllerIntegrationTestWithTestcontainers {
         MvcResult result = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
                 .andReturn();
 
         String responseBody = result.getResponse().getContentAsString();
@@ -103,7 +105,7 @@ class MemberControllerIntegrationTestWithTestcontainers {
                 .andExpect(jsonPath("$.email").value("john.doe@example.com"))
                 .andExpect(jsonPath("$.createdAt").isNotEmpty());
 
-        assert memberRepository.count() == 1;
+        assertEquals(1, memberRepository.count());
     }
 
     @Test
@@ -201,21 +203,21 @@ class MemberControllerIntegrationTestWithTestcontainers {
                 .andExpect(jsonPath("$.email").value("jane.smith@example.com"));
 
         Member retrievedMember = memberRepository.findById(savedMember.getId()).orElseThrow();
-        assert retrievedMember.getFirstName().equals("Jane");
+        assertEquals("Jane", retrievedMember.getFirstName());
     }
 
     @Test
     void deleteMember_shouldRemoveMemberFromDatabase() throws Exception {
         Member savedMember = memberRepository.save(testMember);
-        assert memberRepository.count() == 1;
+        assertEquals(1, memberRepository.count());
 
         mockMvc.perform(delete("/api/v1/members/{id}", savedMember.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isOk());
 
-        assert memberRepository.count() == 0;
-        assert memberRepository.findById(savedMember.getId()).isEmpty();
+        assertEquals(0, memberRepository.count());
+        assertTrue(memberRepository.findById(savedMember.getId()).isEmpty());
     }
 
     @Test
@@ -255,7 +257,7 @@ class MemberControllerIntegrationTestWithTestcontainers {
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isOk());
 
-        assert memberRepository.findById(memberId).isEmpty();
+        assertTrue(memberRepository.findById(memberId).isEmpty());
     }
 
     @Test
@@ -270,7 +272,7 @@ class MemberControllerIntegrationTestWithTestcontainers {
                     .andExpect(status().isOk());
         }
 
-        assert memberRepository.count() == 5;
+        assertEquals(5, memberRepository.count());
     }
 
     @Test

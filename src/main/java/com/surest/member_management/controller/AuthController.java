@@ -29,7 +29,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(
             @RequestBody LoginRequestDto request) {
-        log.info("AUTH CONTROLLER HIT");
+        log.debug("Processing login request for user: {}", request.getUsername());
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -40,7 +40,7 @@ public class AuthController {
 
         User users = userRepository
                 .findByUsername(request.getUsername())
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("User not found: " + request.getUsername()));
 
         String token = jwtUtil.generateToken(
                 users.getUsername(),

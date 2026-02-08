@@ -2,6 +2,7 @@ package com.surest.member_management.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class Member {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Setter
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in the past")
     @Column(name = "date_of_birth", nullable = false)
@@ -34,13 +36,22 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotNull(message = "CreatedAt cannot be null")
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @NotNull(message = "UpdatedAt cannot be null")
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     public UUID getId() {
         return id;
@@ -70,10 +81,6 @@ public class Member {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -86,15 +93,8 @@ public class Member {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }
