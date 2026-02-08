@@ -29,8 +29,6 @@ public class MemberServiceImpl implements MemberService {
     @CacheEvict(value = "members", allEntries = true)
     public Member createMember(Member member) {
         log.info("Adding a new member");
-        member.setCreatedAt(LocalDateTime.now());
-        member.setUpdatedAt(LocalDateTime.now());
         return memberRepository.save(member);
     }
 
@@ -70,7 +68,6 @@ public class MemberServiceImpl implements MemberService {
         existingMember.setLastName(updatedMember.getLastName());
         existingMember.setDateOfBirth(updatedMember.getDateOfBirth());
         existingMember.setEmail(updatedMember.getEmail());
-        existingMember.setUpdatedAt(LocalDateTime.now());
 
         return memberRepository.save(existingMember);
     }

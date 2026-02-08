@@ -102,25 +102,27 @@ class UserServiceImplTest {
 
     @Test
     void existsByUsername_shouldReturnTrue_whenUserExists() {
-        when(userRepository.findByUsername("admin"))
-                .thenReturn(Optional.of(user));
+        when(userRepository.existsByUsername("admin"))
+                .thenReturn(true);
 
         boolean exists = userServiceImpl.existsByUsername("admin");
 
         assertTrue(exists);
-        verify(userRepository).findByUsername("admin");
+        verify(userRepository).existsByUsername("admin");
     }
+
 
     @Test
     void existsByUsername_shouldReturnFalse_whenUserDoesNotExist() {
-        when(userRepository.findByUsername("unknown"))
-                .thenReturn(Optional.empty());
+        when(userRepository.existsByUsername("unknown"))
+                .thenReturn(false);
 
         boolean exists = userServiceImpl.existsByUsername("unknown");
 
         assertFalse(exists);
-        verify(userRepository).findByUsername("unknown");
+        verify(userRepository).existsByUsername("unknown");
     }
+
 }
 
 

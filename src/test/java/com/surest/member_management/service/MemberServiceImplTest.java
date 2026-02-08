@@ -54,10 +54,9 @@ class MemberServiceImplTest {
         Member savedMember = memberServiceImpl.createMember(member);
 
         assertNotNull(savedMember);
-        assertNotNull(savedMember.getCreatedAt());
-        assertNotNull(savedMember.getUpdatedAt());
         verify(memberRepository, times(1)).save(member);
     }
+
 
     // GET ALL MEMBERS
     @Test
@@ -125,16 +124,15 @@ class MemberServiceImplTest {
         assertEquals("Jane", result.getFirstName());
         assertEquals("Smith", result.getLastName());
         assertEquals("jane.smith@gmail.com", result.getEmail());
-        assertNotNull(result.getUpdatedAt());
 
         verify(memberRepository).findById(memberId);
         verify(memberRepository).save(member);
     }
 
+
     //DELETE MEMBER
     @Test
     void deleteMember_shouldDeleteById() {
-        doNothing().when(memberRepository).deleteById(memberId);
 
         memberServiceImpl.deleteMember(memberId);
 

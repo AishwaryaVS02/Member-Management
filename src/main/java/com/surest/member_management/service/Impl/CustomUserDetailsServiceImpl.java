@@ -24,6 +24,10 @@ public class CustomUserDetailsServiceImpl
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
 
+        if (user.getRole() == null || user.getRole().getName() == null) {
+             throw new UsernameNotFoundException("User role not configured");
+        }
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPasswordHash())

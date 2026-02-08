@@ -1,5 +1,8 @@
 spring:
   datasource:
+    url: jdbc:postgresql://localhost:5432/member_db
+    username: postgres
+    password: ${TEST_DB_PASSWORD:Nutan@001}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -19,3 +22,7 @@ spring:
 
   cache:
     type: none
+
+jwt:
+  secret: ${TEST_JWT_SECRET:test-secret-key-1234567890123456}
+  expiration: 86400000

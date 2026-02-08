@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/member_db
     username: postgres
-    password: Nutan@001
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -13,7 +13,7 @@ spring:
       ddl-auto: validate   # IMPORTANT (Flyway manages schema)
       show-sql: true
     properties:
-       format_sql: true
+      format_sql: true
 
   flyway:
     enabled: true
@@ -24,5 +24,5 @@ server:
   port: 8081
 
 jwt:
-  secret: my-super-secret-key-1234567890123456
+  secret: ${JWT_SECRET}
   expiration: 86400000

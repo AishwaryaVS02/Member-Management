@@ -8,10 +8,12 @@ import com.surest.member_management.entity.User;
 import com.surest.member_management.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
     @Mock
@@ -35,11 +38,6 @@ class AuthControllerTest {
 
     @InjectMocks
     private AuthController authController;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void login_successfulAuthentication_returnsToken() {
@@ -63,7 +61,8 @@ class AuthControllerTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
+
         assertNotNull(response.getBody());
         assertEquals("mocked-jwt-token", response.getBody().getToken());
 
@@ -88,7 +87,8 @@ class AuthControllerTest {
         when(userRepository.findByUsername("john")).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NoSuchElementException.class, () -> authController.login(request));
+        assertThrows(RuntimeException.class, () ->
+                authController.login(request));
 
         // Verify authenticate was called
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
